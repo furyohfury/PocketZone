@@ -7,7 +7,7 @@ namespace Game
 	public class LifeComponent : MonoBehaviour
 	{
 		public event Action<int> OnHealthChanged;
-		public int Health => _currentHealth;
+		public int Health {get => _currentHealth; set => _currentHealth = value;}
 		public int MaxHealth => _maxHealth;
 
 		[SerializeField]
