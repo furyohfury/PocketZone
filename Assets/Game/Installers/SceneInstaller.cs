@@ -6,11 +6,13 @@ namespace Game
 	public class SceneInstaller : MonoInstaller
 	{
 		[SerializeField]
-		private GameObject _player;
+		private Player _player;
 		[SerializeField] 
 		private InventoryConfig _inventoryConfig;
 		[SerializeField] 
 		private ItemView _itemViewPrefab;
+		[SerializeField] 
+		private Transform _enemyContainer;
 
 		public override void InstallBindings()
 		{
@@ -21,6 +23,10 @@ namespace Game
 			         .AsSingle();
 
 			Container.BindInterfacesAndSelfTo<PlayerController>()
+			         .AsSingle()
+			         .WithArguments(_player.gameObject);
+
+			Container.Bind<PlayerService>()
 			         .AsSingle()
 			         .WithArguments(_player);
 
@@ -33,7 +39,7 @@ namespace Game
 
 			Container.BindInterfacesAndSelfTo<PlayerPickController>()
 			         .AsSingle()
-			         .WithArguments(_player);
+			         .WithArguments(_player.gameObject);
 
 			Container.Bind<InventoryView>()
 			         .FromComponentInHierarchy()
@@ -48,6 +54,10 @@ namespace Game
 
 			Container.BindInterfacesAndSelfTo<InventoryPresenter>()
 			         .AsSingle();
+			
+			Container.BindInterfacesAndSelfTo<EnemyService>()
+			         .AsSingle()
+			         .WithArguments(_enemyContainer);
 		}
 	}
 }

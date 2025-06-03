@@ -1,6 +1,8 @@
+using UnityEngine;
+
 namespace Game
 {
-    public class EnemiesPrefabs : MonoBehaviour
+    public class IdComponent : MonoBehaviour
     {
         public string Id => _id;
 

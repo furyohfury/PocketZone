@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
+using SaveLoad;
+using UnityEngine;
+
 namespace Game
 {
     public class EnemiesSaveLoader : SaveLoader<EnemyData[], EnemyService>
@@ -9,7 +14,7 @@ namespace Game
 			_prefabs = prefabs;
 		}
 
-		protected override IEnumerable<EnemyData> ConvertToData(EnemyService service)
+		protected override EnemyData[] ConvertToData(EnemyService service)
 		{
 			var enemies = service.GetEnemies();
 			var saveData = new EnemyData[enemies.Length];
@@ -17,7 +22,7 @@ namespace Game
 			{
                 var enemy = enemies[i];
 				Transform enemyTransform = enemy.transform;
-				string enemyId = enemy.GetComponentInChildren<IdComponent>();
+				string enemyId = enemy.GetComponentInChildren<IdComponent>().Id;
 				var instanceId = enemy.GetInstanceID();
 				var enemyHealth = enemy.GetComponentInChildren<LifeComponent>().Health;
 
@@ -33,7 +38,7 @@ namespace Game
 			return saveData;
 		}
 
-		protected override void SetupData(EnemyService service, IEnumerable<EnemyData> data)
+		protected override void SetupData(EnemyService service, EnemyData[] data)
 		{
 			var sceneEnemies = service.GetEnemies();
 			if (sceneEnemies == null)
@@ -45,7 +50,7 @@ namespace Game
 
 			foreach (var sceneEnemy in sceneEnemies)
 			{
-				if (enemyDatas.Any(enemyData => enemyData.InstanceId == sceneEnemy.GetInstanceID) == false)
+				if (enemyDatas.Any(enemyData => enemyData.InstanceId == sceneEnemy.GetInstanceID()) == false)
 				{
 					Object.Destroy(sceneEnemy);
 				}
@@ -65,7 +70,7 @@ namespace Game
 			}
 		}
 
-		private static void SetupExistingEnemy(IEntity sceneEnemy, EnemyData enemyData)
+		private static void SetupExistingEnemy(GameObject sceneEnemy, EnemyData enemyData)
 		{
 			var enemyTransform = sceneEnemy.transform;
 			enemyTransform.position = enemyData.Position;
@@ -77,7 +82,8 @@ namespace Game
 			var id = enemyData.Id;
 			var prefab = _prefabs[id];
 			var pos = enemyData.Position;
-			var newEnemy = GameObject.Instantiate(prefab, pos, rot, container);
+			var newEnemy = GameObject.Instantiate(prefab, container);
+			newEnemy.transform.position = pos;
 			newEnemy.GetComponentInChildren<LifeComponent>().Health = enemyData.Health;
 		}
     }
